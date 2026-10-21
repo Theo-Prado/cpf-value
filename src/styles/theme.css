@@ -1,0 +1,671 @@
+@import './tokens.css';
+
+/* ==========================================================================
+   Cartório Digital de CPF — estilos base (SDD 6.5, 6.6, 6.7, 15.3, 15.6)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--paper-200);
+  background: var(--void);
+  overflow-x: hidden;
+}
+
+/* Grão de fibra do papel (SDD 6.3) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.6) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0 1px, transparent 1px 4px);
+  background-blend-mode: multiply;
+}
+
+::selection {
+  background: var(--brass-500);
+  color: var(--ink-900);
+}
+
+/* Foco visível: anel de latão de 2px com offset 3px (SDD 15.3) */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* Visualmente oculto, mas acessível a leitores de tela (SDD 15.4) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Estrutura da página -------------------------------------------------- */
+
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-24);
+  padding: var(--space-16) var(--space-4) var(--space-24);
+}
+
+.app__perspective {
+  perspective: 1200px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Vinheta global (SDD 6.6) */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background: radial-gradient(
+    ellipse 90% 80% at 50% 45%,
+    transparent 40%,
+    rgba(8, 6, 5, 0.55) 100%
+  );
+}
+
+/* --- Cabeçalho ----------------------------------------------------------- */
+
+.masthead {
+  display: flex;
+
+/* --- Estação de digitação ------------------------------------------------- */
+
+.station {
+  width: 100%;
+  max-width: var(--document-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.station__label {
+  display: block;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-600);
+}
+
+.cpf-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cpf-field__control {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+  padding: 18px 20px;
+  background: rgba(23, 18, 13, 0.72);
+  border: 1px solid var(--ink-700);
+  border-radius: 2px;
+  transition: border-color var(--dur-fast) var(--ease-metal),
+    box-shadow var(--dur-fast) var(--ease-metal);
+}
+
+.cpf-field__control:focus-within {
+  border-color: var(--brass-500);
+  box-shadow: 0 0 0 4px rgba(200, 162, 74, 0.25);
+}
+
+.cpf-field__input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: max(var(--fs-mono), 16px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--paper-100);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.cpf-field__input::placeholder {
+  color: var(--ink-400);
+  opacity: 0.6;
+}
+
+/* Cursor-sucessor com forma de carimbo (SDD 14.2) */
+.cpf-field__successor {
+  display: inline-block;
+  width: 3px;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--brass-500);
+  animation: stamp-cursor 1.1s steps(1) infinite;
+}
+
+@keyframes stamp-cursor {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.cpf-field__buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.icon-button {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--paper-200);
+  background: transparent;
+  border: 1px solid var(--ink-700);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-metal),
+    color var(--dur-fast) var(--ease-metal), background-color var(--dur-fast) var(--ease-metal);
+}
+
+.icon-button:hover:not(:disabled) {
+  color: var(--gold-leaf);
+  border-color: var(--brass-600);
+}
+
+.icon-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cpf-field__error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--seal-red);
+}
+
+.cpf-field__error--muted {
+  color: var(--ink-400);
+}
+
+.sample-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.sample-row__label {
+
+/* --- O documento de papel ------------------------------------------------- */
+
+.document {
+  position: relative;
+  width: 100%;
+  max-width: var(--document-max-width);
+  margin: 0;
+  padding: clamp(24px, 4vw, 56px);
+  color: var(--ink-800);
+  background-color: var(--paper-100);
+  background-image: radial-gradient(
+      ellipse 100% 80% at 30% 12%,
+      rgba(255, 252, 242, 0.85),
+      transparent 60%
+    ),
+    radial-gradient(ellipse 120% 100% at 70% 110%, rgba(90, 70, 44, 0.2), transparent 55%);
+  box-shadow: 0 1px 2px rgba(8, 6, 5, 0.55), 0 8px 22px rgba(8, 6, 5, 0.38),
+    0 28px 60px rgba(8, 6, 5, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -30px 60px rgba(120, 96, 60, 0.14);
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.document__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(74, 59, 46, 0.25);
+  color: var(--ink-600);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.cpf-hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.02em;
+  margin: var(--space-12) 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-hero);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--ink-800);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.cpf-hero__char--pending {
+  color: var(--ink-400);
+  opacity: 0.3;
+}
+
+.cpf-hero__sep {
+  color: var(--ink-400);
+}
+
+.document__footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(74, 59, 46, 0.25);
+  color: var(--ink-600);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* --- O carimbo (SDD 6.4) ------------------------------------------------- */
+
+.stamp {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: var(--space-8) 0;
+  mix-blend-mode: multiply;
+}
+
+.stamp__svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  filter: drop-shadow(0 10px 18px rgba(8, 6, 5, 0.45));
+}
+
+.stamp--ghost {
+  opacity: 0.2;
+}
+
+.stamp--hidden {
+  display: none;
+}
+
+.stamp__ring {
+  fill: none;
+  stroke: var(--ink-700);
+  stroke-width: 2.5;
+}
+
+.stamp__ring--inner {
+  stroke-width: 1.2;
+}
+
+.stamp__body {
+  fill: var(--ink-700);
+}
+
+.stamp--valid .stamp__ring,
+.stamp--valid .stamp__body {
+  stroke: var(--seal-green);
+  fill: var(--seal-green);
+}
+
+.stamp--invalid .stamp__ring,
+.stamp--invalid .stamp__body {
+  stroke: var(--seal-red);
+  fill: var(--seal-red);
+}
+
+/* --- Veredito ------------------------------------------------------------- */
+
+.verdict {
+  width: 100%;
+  max-width: var(--document-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.verdict__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  color: var(--paper-100);
+}
+
+.verdict__title--valid {
+  color: var(--gold-leaf);
+}
+
+.verdict__title--invalid {
+  color: var(--paper-200);
+}
+
+.verdict__reason {
+  margin: 0;
+  color: var(--paper-300);
+}
+
+.rule-breakdown {
+  width: 100%;
+  max-width: var(--document-max-width);
+  text-align: left;
+  color: var(--paper-300);
+  border: 1px solid var(--ink-700);
+  border-radius: 2px;
+  background: rgba(23, 18, 13, 0.6);
+}
+
+.rule-breakdown__summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+  cursor: pointer;
+}
+
+.rule-breakdown__body {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-table caption {
+  padding: var(--space-2) 0;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+}
+
+.calc-table th,
+.calc-table td {
+  padding: var(--space-1) var(--space-2);
+  text-align: right;
+  border-bottom: 1px solid rgba(74, 59, 46, 0.3);
+}
+
+.calc-table th:first-child,
+.calc-table td:first-child {
+  text-align: left;
+}
+
+.calc-table__match {
+  color: var(--gold-leaf);
+}
+
+.calc-table__mismatch {
+  color: var(--seal-red);
+}
+
+/* --- Rodapé e avisos ------------------------------------------------------ */
+
+.colophon {
+  width: 100%;
+  max-width: var(--document-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--ink-700);
+  color: var(--ink-400);
+  font-size: 0.875rem;
+}
+
+.colophon strong {
+  color: var(--paper-300);
+}
+
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  align-self: flex-start;
+  font-size: 0.875rem;
+  color: var(--paper-200);
+  background: transparent;
+  border: 1px solid var(--ink-700);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.motion-toggle:hover {
+  color: var(--gold-leaf);
+  border-color: var(--brass-600);
+}
+
+/* --- Cena 3D e fallback (SDD 11.8) --------------------------------------- */
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.scene__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scene__fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      ellipse 80% 60% at 28% 8%,
+      rgba(200, 162, 74, 0.22),
+      transparent 62%
+    ),
+    linear-gradient(160deg, var(--desk-700) 0%, var(--desk-900) 55%, var(--void) 100%);
+}
+
+/* --- Responsividade (SDD 15.6) -------------------------------------------- */
+
+@media (max-width: 640px) {
+  .app {
+    gap: var(--space-16);
+    padding: var(--space-8) var(--space-3) var(--space-16);
+  }
+
+  .document {
+    padding: var(--space-6);
+  }
+
+  .cpf-hero {
+    margin: var(--space-8) 0;
+  }
+
+  .document__header,
+  .document__footer {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+/* --- Movimento reduzido (SDD 7.5, 15.5) ---------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .cpf-field__successor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+
+.stamp__text {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  fill: var(--ink-700);
+  text-transform: uppercase;
+}
+
+.stamp--valid .stamp__text {
+  fill: var(--seal-green);
+}
+
+.stamp--invalid .stamp__text {
+  fill: var(--seal-red);
+}
+
+.stamp__signature {
+  fill: none;
+  stroke: var(--ink-700);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.stamp--valid .stamp__signature {
+  stroke: var(--seal-green);
+}
+
+.stamp--invalid .stamp__signature {
+  stroke: var(--seal-red);
+}
+
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-600);
+  margin-right: var(--space-1);
+}
+
+.sample-button {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper-200);
+  background: transparent;
+  border: 1px dashed var(--ink-700);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-metal),
+    color var(--dur-fast) var(--ease-metal);
+}
+
+.sample-button:hover {
+  color: var(--gold-leaf);
+  border-color: var(--brass-600);
+  border-style: solid;
+}
+
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.masthead__eyebrow {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+}
+
+.masthead__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--paper-100);
+}
+
+.masthead__subtitle {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--ink-400);
+}
+
+.seal-emblem {
+  display: block;
+  width: clamp(64px, 10vw, 96px);
+  height: auto;
+  filter: drop-shadow(0 2px 6px rgba(8, 6, 5, 0.6));
+}

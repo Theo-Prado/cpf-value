@@ -1,0 +1,24 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+coverage
+*.log
+*.tsbuildinfo
+out.log
+
+# Artefatos de diagnostico temporario (nao fazem parte da aplicacao)
+b.txt
+d.txt
+t.txt
+t2.txt
+t3.txt
+t4.txt
+*.out
+*.err
+
+# Vercel
+.vercel
+.env*
